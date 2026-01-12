@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>True or False – Christmas Quiz</title>
+
+<style>
+body{
+  margin:0;
+  font-family:"Comic Sans MS","Arial Rounded MT Bold",sans-serif;
+  background: linear-gradient(135deg,#ccefff,#fff2cc);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+
+.quiz{
+  background:white;
+  width:90%;
+  max-width:820px;
+  border-radius:30px;
+  padding:25px;
+  box-shadow:0 15px 35px rgba(0,0,0,.2);
+}
+
+h1{
+  text-align:center;
+  color:#ff7b00;
+  font-size:34px;
+}
+
+.score{
+  text-align:center;
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.progress{
+  background:#ddd;
+  height:14px;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+.bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#ff7b00,#ffd54f,#7b5cff);
+  transition:.5s;
+}
+
+.statement{
+  background:#f0faff;
+  border-radius:20px;
+  padding:18px;
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:15px;
+}
+
+.buttons{
+  display:flex;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.buttons button{
+  flex:1;
+  padding:16px;
+  font-size:22px;
+  border:none;
+  border-radius:25px;
+  cursor:pointer;
+  font-weight:900;
+  box-shadow:0 10px 20px rgba(0,0,0,.15);
+}
+
+.true{ background:#1aa34a;color:white; }
+.false{ background:#e53935;color:white; }
+
+.buttons button.selected{
+  outline:4px solid #ffcc33;
+}
+
+.feedback{
+  min-height:50px;
+  font-size:20px;
+  font-weight:800;
+  text-align:center;
+}
+
+.correct{ color:green; }
+.wrong{ color:red; }
+
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin-top:15px;
+}
+
+.controls button{
+  padding:14px 24px;
+  font-size:20px;
+  border-radius:25px;
+  border:none;
+  cursor:pointer;
+  font-weight:900;
+  background:#ff7b00;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz">
+  <h1>🎄 True or False 🎄</h1>
+
+  <div class="score" id="score">🏆 Score: 0 / 6</div>
+
+  <div class="progress">
+    <div class="bar" id="bar"></div>
+  </div>
+
+  <div class="statement" id="statement"></div>
+
+  <div class="buttons">
+    <button class="true" onclick="choose(true)">✔ TRUE</button>
+    <button class="false" onclick="choose(false)">❌ FALSE</button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <div class="controls">
+    <button onclick="check()">✅ Check</button>
+    <button onclick="replay()">🔁 Replay</button>
+  </div>
+</div>
+
+<script>
+const quiz = [
+  { text:"1️⃣ Scrooge was at home on Christmas Eve.", correct:false,
+    correction:"Scrooge was in his office on Christmas Eve."},
+  { text:"2️⃣ It was a cold and foggy evening.", correct:false,
+    correction:"It was a cold and foggy afternoon."},
+  { text:"3️⃣ Scrooge and Bob Cratchit were both in the same room.", correct:false,
+    correction:"They were in different rooms. The door was open so Scrooge could watch Bob."},
+  { text:"4️⃣ Bob Cratchit worked for Scrooge.", correct:true },
+  { text:"5️⃣ Scrooge and Fred were relatives.", correct:true },
+  { text:"6️⃣ Fred didn’t have much money.", correct:true }
+];
+
+let current = 0;
+let selected = null;
+let score = 0;
+
+const statement = document.getElementById("statement");
+const feedback = document.getElementById("feedback");
+const bar = document.getElementById("bar");
+const scoreBox = document.getElementById("score");
+
+function load(){
+  statement.textContent = quiz[current].text;
+  feedback.textContent = "";
+  feedback.className = "feedback";
+  selected = null;
+  document.querySelectorAll(".buttons button")
+    .forEach(b=>b.classList.remove("selected"));
+  bar.style.width = (current/quiz.length*100)+"%";
+  scoreBox.textContent = `🏆 Score: ${score} / ${quiz.length}`;
+}
+
+function choose(val){
+  selected = val;
+  document.querySelectorAll(".buttons button")
+    .forEach(b=>b.classList.remove("selected"));
+  event.target.classList.add("selected");
+}
+
+function check(){
+  if(selected===null){
+    feedback.textContent="👉 Choose TRUE or FALSE!";
+    feedback.className="feedback wrong";
+    return;
+  }
+
+  if(selected===quiz[current].correct){
+    score++;
+    feedback.textContent="🎉 Correct!";
+    feedback.className="feedback correct";
+  }else{
+    feedback.innerHTML="❌ False.<br>✔ "+quiz[current].correction;
+    feedback.className="feedback wrong";
+  }
+
+  current++;
+  if(current<quiz.length){
+    setTimeout(load, 900);
+  }else{
+    finish();
+  }
+}
+
+function finish(){
+  statement.textContent="🏆 Quiz Finished!";
+  feedback.textContent=`Your final score: ${score} / ${quiz.length}`;
+  feedback.className="feedback correct";
+  bar.style.width="100%";
+  scoreBox.textContent = `🏆 Score: ${score} / ${quiz.length}`;
+}
+
+function replay(){
+  current = 0;
+  score = 0;
+  load();
+}
+
+load();
+</script>
+
+</body>
+</html>
